@@ -25,10 +25,11 @@ void setPos(sf::Sprite& tube){
 	float x = tube.getPosition().x;
 	float y = tube.getPosition().y;
 	x = 500;
-	y = 50 + std::rand() % 100;
+	y = -600 + std::rand() % 500;
 
 	tube.setPosition({x,y});
 }
+
 
 GameState state = GameState::Start;
 
@@ -36,10 +37,11 @@ GameState state = GameState::Start;
 int main()
 {
 //Texts
-	std::cout << "PROGRAM STARTED\n" << std::flush;
+	int score = 0;
 	std::srand(std::time(nullptr));
 	sf::Font font("assets/04B_30__.TTF");
 	sf::Color fontcolor(173,247,240, 255);
+	sf::Color scorecolor(247,181,194,255);
 	sf::Text gamename(font);
 	gamename.setString("FlappyBird");
 	gamename.setCharacterSize(50);
@@ -51,7 +53,12 @@ int main()
 	pressEnter.setCharacterSize(20);
 	pressEnter.setFillColor(fontcolor);
 	pressEnter.setPosition(sf::Vector2f(68,150));
-
+	sf::Text Score(font);
+	Score.setString(std::to_string(score));
+	Score.setCharacterSize(40);
+	Score.setStyle(sf::Text::Bold);
+	Score.setFillColor(scorecolor);
+	Score.setPosition({240, 70});
 	sf::RenderWindow window( sf::VideoMode( {500,800}), "FlappyBird" );
 	window.setFramerateLimit(60);
 	window.setKeyRepeatEnabled(false);
@@ -82,15 +89,20 @@ int main()
 	int backGroundPosX = 0;
 	int backGroundPosY = 0;
 	float tubeSpeed = 2;
+	bool tube1Passed = false;
+	bool tube2Passed = false;
+	bool tube3Passed = false;
+	bool speepLvl = false;
+
 	sf::Angle currentRotation ;
 	sf::Angle targetRotation;
 	sf::Color background(255,255,255,255);
 	// sf::Angle angleDown = sf::degrees(305);
 	// sf::Angle angleUp = sf::degrees(470);
 	bird.setPosition(sf::Vector2f(20,400));
-	tube1.setPosition({500,0});
-	tube2.setPosition({850,0});
-	tube3.setPosition({1200,0});
+	tube1.setPosition({500,-200});
+	tube2.setPosition({850,-400});
+	tube3.setPosition({1200,-600});
 
 	while ( window.isOpen() )
 	{
@@ -150,20 +162,42 @@ int main()
 
 			
 			if(tube1.getPosition().x < -500){
-				setPos(tube1);
+				setPos(tube1); tube1Passed = false;
 			}
 			if(tube2.getPosition().x < -500){
-				setPos(tube2);
+				setPos(tube2); tube2Passed = false;
 			}
 			if(tube3.getPosition().x< -500) {
-				setPos(tube3);
+				setPos(tube3); tube3Passed =false;
 			} 
-			std::cout << tube1.getPosition().x << std::endl;
+			sf::Vector2f birdpos = bird.getPosition();
+			
+			if(!tube1Passed && birdpos.x > tube1.getPosition().x + 100){
+				score ++;
+				tube1Passed = true;
+			}
+			if(!tube2Passed && birdpos.x > tube2.getPosition().x + 100){
+				score ++;
+				tube2Passed = true;
+			}
+			if(!tube3Passed && birdpos.x > tube3.getPosition().x + 100){
+				score ++;
+				tube3Passed = true;
+			}
+
+			if(bird.getPosition().y > 800 || bird.getPosition().y < 0){
+				state = GameState::deathscreen;
+			}
+			
+			Score.setString(std::to_string(score));
+
 			window.draw(bird);
 			window.draw(tube1);
 			window.draw(tube2); 
 			window.draw(tube3);
-
+			window.draw(Score);
+			
+			
 		}
 
 
@@ -175,6 +209,13 @@ int main()
 		if(state == GameState::settings)
 		{
 			//....
+		}
+
+		if(state == GameState::deathscreen){
+			{
+				window.clear(sf::Color::Black);
+				window.draw(Score);
+			}
 		}
 
 

@@ -36,16 +36,3 @@ jobs:
 
     - name: Build
       run: cmake --build build --config Release
-
-    - name: Copy Assets
-      if: runner.os == 'Windows'
-      run: |
-        mkdir -p build/bin/assets
-        xcopy /E /I /Y assets build/bin/assets
-
-    - name: Upload Windows Build
-      if: runner.os == 'Windows'
-      uses: actions/upload-artifact@v4
-      with:
-        name: FlappyBird-Windows
-        path: build/bin/
