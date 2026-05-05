@@ -53,6 +53,11 @@ int main()
 	pressEnter.setCharacterSize(20);
 	pressEnter.setFillColor(fontcolor);
 	pressEnter.setPosition(sf::Vector2f(68,150));
+	sf::Text verloren(font);
+	verloren.setString("Bruh, you lost!");
+	verloren.setCharacterSize(30);
+	verloren.setFillColor(sf::Color::White);
+	verloren.setPosition(sf::Vector2f(100,400));
 	sf::Text Score(font);
 	Score.setString(std::to_string(score));
 	Score.setCharacterSize(40);
@@ -117,7 +122,8 @@ int main()
 					velocity = MAXVELOCITY;
 				}
 			}
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)){
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)){
+				bird.setPosition(sf::Vector2f(20,400));
 				state = GameState::Playing;
 			}
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)){
@@ -133,6 +139,9 @@ int main()
 		window.clear(background);
 		if (state == GameState::Start)
 		{
+			window.draw(backgroundGame);
+			bird.setPosition({200,400});
+			window.draw(bird);
 			window.draw(gamename);
 			window.draw(pressEnter);
 		}
@@ -215,6 +224,7 @@ int main()
 			{
 				window.clear(sf::Color::Black);
 				window.draw(Score);
+				window.draw(verloren);
 			}
 		}
 
